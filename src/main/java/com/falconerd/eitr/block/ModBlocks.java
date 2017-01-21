@@ -2,14 +2,15 @@
  * Author: Falconerd
  * Date: 2017/01/19
  * 
- * Aetherium is released under the MIT license.
+ * Eitr is released under the MIT license.
  *
- * Source @ https://github.com/Falconerd/aetherium
+ * Source @ https://github.com/Falconerd/eitr
  */
 package com.falconerd.eitr.block;
 
+import com.falconerd.eitr.block.analyzer.BlockAnalyzer;
 import com.falconerd.eitr.block.counter.BlockCounter;
-import com.falconerd.eitr.block.fluid.BlockEitr;
+import com.falconerd.eitr.block.harvester.BlockHarvester;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
@@ -18,12 +19,14 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class ModBlocks {
     public static BlockOre oreCopper;
     public static BlockCounter counter;
-    public static BlockEitr eitr;
+    public static BlockAnalyzer analyzer;
+    public static BlockHarvester harvester;
 
     public static void init() {
         oreCopper = register(new BlockOre("ore_copper").setCreativeTab(CreativeTabs.MATERIALS));
         counter = register(new BlockCounter());
-        eitr = register(new BlockEitr("eitr"));
+        analyzer = register(new BlockAnalyzer());
+        harvester = register(new BlockHarvester());
     }
 
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {
