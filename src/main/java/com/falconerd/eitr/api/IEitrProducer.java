@@ -8,5 +8,6 @@ package com.falconerd.eitr.api;/*
  */
 
 public interface IEitrProducer {
-    int takeEitr (int amount);
+    int takeEitr(int amount);
+    int increaseEitr(int amount);
 }

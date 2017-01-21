@@ -11,10 +11,11 @@ package com.falconerd.eitr.api.implementation;
 import com.falconerd.eitr.api.IEitrConsumer;
 import com.falconerd.eitr.api.IEitrHolder;
 import com.falconerd.eitr.api.IEitrProducer;
+import com.falconerd.eitr.pipes.IEitrTransferer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class BaseEitrContainer implements IEitrConsumer, IEitrProducer, IEitrHolder, INBTSerializable<NBTTagCompound> {
+public class BaseEitrContainer implements IEitrConsumer, IEitrProducer, IEitrHolder, IEitrTransferer, INBTSerializable<NBTTagCompound> {
 
     private int stored;
     private int capacity;
@@ -52,6 +53,11 @@ public class BaseEitrContainer implements IEitrConsumer, IEitrProducer, IEitrHol
     @Override
     public int takeEitr(int amount) {
         return stored -= Math.min(stored, Math.min(getOutputRate(), amount));
+    }
+
+    @Override
+    public int increaseEitr(int amount) {
+        return stored += Math.min(getCapacity() - stored, Math.min(getInputRate(), amount));
     }
 
     @Override

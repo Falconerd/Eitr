@@ -8,11 +8,10 @@
  */
 package com.falconerd.eitr.block.harvester;
 
+import com.falconerd.eitr.api.IEitrHolder;
 import com.falconerd.eitr.api.IEitrProducer;
 import com.falconerd.eitr.api.implementation.BaseEitrContainer;
 import com.falconerd.eitr.capability.EitrCapabilities;
-import com.falconerd.eitr.util.Chat;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -24,6 +23,7 @@ public class TileEntityHarvester extends TileEntity implements ITickable {
 
     public TileEntityHarvester() {
         instance = new BaseEitrContainer();
+        instance.setCapacity(2000);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class TileEntityHarvester extends TileEntity implements ITickable {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == EitrCapabilities.CAPABILITY_CONSUMER || capability == EitrCapabilities.CAPABILITY_HOLDER || capability == EitrCapabilities.CAPABILITY_PRODUCER) {
+        if (capability == EitrCapabilities.CAPABILITY_PRODUCER || capability == EitrCapabilities.CAPABILITY_HOLDER) {
             return (T) instance;
         }
 
@@ -51,7 +51,7 @@ public class TileEntityHarvester extends TileEntity implements ITickable {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing side) {
-        if (capability == EitrCapabilities.CAPABILITY_CONSUMER || capability == EitrCapabilities.CAPABILITY_HOLDER || capability == EitrCapabilities.CAPABILITY_PRODUCER) {
+        if (capability == EitrCapabilities.CAPABILITY_PRODUCER || capability == EitrCapabilities.CAPABILITY_HOLDER) {
             return true;
         }
 
@@ -62,10 +62,18 @@ public class TileEntityHarvester extends TileEntity implements ITickable {
     public void update() {
         if (!getWorld().isRemote) {
             final IEitrProducer isProducer = getCapability(EitrCapabilities.CAPABILITY_PRODUCER, null);
-            if (isProducer != null) {
-                Chat.sendMessage("NOT NULL!");
-            } else {
-                Chat.sendMessage("NULL");
+            final IEitrHolder isHolder = getCapability(EitrCapabilities.CAPABILITY_HOLDER, null);
+
+            if (isProducer != null && isHolder != null) {
+                // Check if we can actually produce Eitr somehow
+                // Increase the Eitr in this block if the conditions are met...
+                // @TODO
+                // Conditions should be: The chunk this TE is in should have
+                // some Eitr left in it. Eitr should be drained out of each
+                // chunk at a constant rate and only recharge during the night.
+                // For now we will just leave this as constantly increasing in
+                // Eitr until it's capacity is reached.
+                instance.increaseEitr(40);
             }
         }
     }

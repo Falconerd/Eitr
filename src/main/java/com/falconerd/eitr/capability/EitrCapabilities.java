@@ -11,6 +11,7 @@ package com.falconerd.eitr.capability;
 import com.falconerd.eitr.api.IEitrConsumer;
 import com.falconerd.eitr.api.IEitrHolder;
 import com.falconerd.eitr.api.IEitrProducer;
+import com.falconerd.eitr.pipes.IEitrTransferer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -19,10 +20,6 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 
 import javax.annotation.Nullable;
 
-/**
- * Capability system based on Tesla API. Pretty much exactly the same, actually.
- * Hooray MIT License.
- */
 public class EitrCapabilities {
 
     @CapabilityInject(IEitrConsumer.class)
@@ -33,6 +30,9 @@ public class EitrCapabilities {
 
     @CapabilityInject(IEitrHolder.class)
     public static Capability<IEitrHolder> CAPABILITY_HOLDER = null;
+
+    @CapabilityInject(IEitrTransferer.class)
+    public static Capability<IEitrTransferer> CAPABILITY_TRANSFERER = null;
 
     public static class CapabilityEitrConsumer<T extends IEitrConsumer> implements IStorage<IEitrConsumer> {
 
@@ -69,6 +69,19 @@ public class EitrCapabilities {
 
         @Override
         public void readNBT(Capability<IEitrHolder> capability, IEitrHolder instance, EnumFacing side, NBTBase nbt) {
+
+        }
+    }
+
+    public static class CapabilityEitrTransferer<I extends IEitrTransferer> implements IStorage<IEitrTransferer> {
+
+        @Override
+        public NBTBase writeNBT(Capability<IEitrTransferer> capability, IEitrTransferer instance, EnumFacing side) {
+            return null;
+        }
+
+        @Override
+        public void readNBT(Capability<IEitrTransferer> capability, IEitrTransferer instance, EnumFacing side, NBTBase nbt) {
 
         }
     }

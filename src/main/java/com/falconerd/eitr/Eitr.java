@@ -15,6 +15,7 @@ import com.falconerd.eitr.api.implementation.BaseEitrContainer;
 import com.falconerd.eitr.block.ModBlocks;
 import com.falconerd.eitr.capability.EitrCapabilities;
 import com.falconerd.eitr.item.ModItems;
+import com.falconerd.eitr.pipes.IEitrTransferer;
 import com.falconerd.eitr.proxy.CommonProxy;
 import com.falconerd.eitr.recipe.ModRecipes;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -41,6 +42,7 @@ public class Eitr {
         CapabilityManager.INSTANCE.register(IEitrProducer.class, new EitrCapabilities.CapabilityEitrProducer<IEitrProducer>(), BaseEitrContainer.class);
         CapabilityManager.INSTANCE.register(IEitrConsumer.class, new EitrCapabilities.CapabilityEitrConsumer<IEitrConsumer>(), BaseEitrContainer.class);
         CapabilityManager.INSTANCE.register(IEitrHolder.class, new EitrCapabilities.CapabilityEitrHolder<IEitrHolder>(), BaseEitrContainer.class);
+        CapabilityManager.INSTANCE.register(IEitrTransferer.class, new EitrCapabilities.CapabilityEitrTransferer<IEitrTransferer>(), BaseEitrContainer.class);
         ModItems.init();
         ModBlocks.init();
     }

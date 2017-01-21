@@ -11,7 +11,7 @@ package com.falconerd.eitr.util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
 
-public class Chat {
+public class ChatHelper {
 
     public static void sendMessage(String message) {
         Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(new TextComponentString(message), 2340972);
