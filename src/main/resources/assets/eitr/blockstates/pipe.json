@@ -1,0 +1,12 @@
+{
+  "forget_marker": 1,
+  "variants": {
+    "normal": {
+      "model": "eitr:pipe"
+    },
+    "inventory": {
+      "model": "eitr:pipe",
+      "transform": "forge:default-block"
+    }
+  }
+}

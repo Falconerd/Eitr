@@ -13,6 +13,7 @@ import com.falconerd.eitr.block.counter.BlockCounter;
 import com.falconerd.eitr.block.harvester.BlockHarvester;
 import com.falconerd.eitr.pipes.BlockPipe;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -29,7 +30,7 @@ public class ModBlocks {
         counter = register(new BlockCounter());
         analyzer = register(new BlockAnalyzer());
         harvester = register(new BlockHarvester());
-        pipe = register(new BlockPipe());
+        pipe = register(new BlockPipe(Material.ROCK, "pipe"));
     }
 
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {

@@ -10,17 +10,46 @@ package com.falconerd.eitr.pipes;
 
 import com.falconerd.eitr.api.implementation.BaseEitrContainer;
 import com.falconerd.eitr.capability.EitrCapabilities;
-import com.falconerd.eitr.util.ChatHelper;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import com.falconerd.eitr.network.message.EnumPipeMode;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.capabilities.Capability;
-
-import javax.annotation.Nullable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 
 public class TileEntityPipe extends TileEntity {
+
+    /**
+     * A method for mapping int to EnumPipeMode
+     */
+    public static EnumPipeMode modeToInt(int value) {
+        switch (value) {
+            case 0:
+                return EnumPipeMode.INPUT;
+            case 1:
+                return EnumPipeMode.OUTPUT;
+            case 2:
+                return EnumPipeMode.DISABLED;
+            default:
+                return EnumPipeMode.INPUT;
+        }
+    }
+
+    public EnumPipeConnection up = EnumPipeConnection.NONE;
+    public EnumPipeConnection down = EnumPipeConnection.NONE;
+    public EnumPipeConnection north = EnumPipeConnection.NONE;
+    public EnumPipeConnection south = EnumPipeConnection.NONE;
+    public EnumPipeConnection east = EnumPipeConnection.NONE;
+    public EnumPipeConnection west = EnumPipeConnection.NONE;
+
+    public void updateNeighbours(IBlockAccess world) {
+        up = getConnection(world, getPos().up(), EnumFacing.DOWN);
+    }
+
+    public EnumPipeConnection getConnection(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        if (world.getTileEntity(pos) != null) {
+            if (world.getTileEntity(pos).hasCapability(isEitrCapab))
+        }
+    }
 
     private BaseEitrContainer instance;
 
@@ -28,74 +57,4 @@ public class TileEntityPipe extends TileEntity {
         instance = new BaseEitrContainer();
     }
 
-    int mode = 0;
-
-    public int getMode() {
-        return mode;
-    }
-
-    public int setMode(int value) {
-        return mode = value;
-    }
-
-    public void switchMode() {
-        if (getMode() == 1) {
-            setMode(0);
-        } else {
-            setMode(1);
-        }
-        ChatHelper.sendMessage("New mode is " + getMode());
-        TileEntityPipe.this.markDirty();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == EitrCapabilities.CAPABILITY_TRANSFERER) {
-            return (T) instance;
-        }
-
-        return super.getCapability(capability, side);
-    }
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing side) {
-        if (capability == EitrCapabilities.CAPABILITY_TRANSFERER) {
-            return true;
-        }
-
-        return super.hasCapability(capability, side);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-
-        ChatHelper.sendMessage("Reading from NBT: " + compound.getInteger("mode"));
-        setMode(compound.getInteger("mode"));
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
-
-        compound.setInteger("mode", getMode());
-
-        return compound;
-    }
-
-    @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
-    }
-
-    @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
-    }
 }

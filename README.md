@@ -11,32 +11,17 @@ various ways.
 > as seen in many other mods. Over time, more unique elements will be added in
 > as my Minecraft modding experience increases.
 
-### Ore Doubling
+### Ore Processing
 
-The ore doubling mechanic is quite involved, but can be fully automated.
+The ore processing pipeline in Eitr is used to double ores, create alloys and
+use Enriched Molten Ore to create things.
 
-Ore is put into a Blast Furnace and melted into a molten form. This molten ore
-is then transported via pipes into an Eitr Infusement Chamber.
-
-The Eitr Infusion Chamber must have a supply of Eitr to infuse the molten ore
-with. Once the process is completed, the output of this machine will be double
-what is put in, minus the required Eitr.
-
-The molten ore can then be piped into a Heated Tank for storage and to create
-Alloys, or it can be piped into the Heavy Press.
-
-The Heavy Press can be fitted with a range of moulds. It can be fitted with two
-moulds at a time. One of these moulds is the Ingot Mould.
-
-The molten ore will be processed by this machine and then output as Ingots!
+![Flow Chart of Ore Processing](http://i.imgur.com/V8YPAQb.png)
 
 ### Alloying
 
 Alloying is achieved by combining molten metals inside a Heated Tank. For
 instance, combining Molten Copper and Molten Zinc will produce Molten Brass.
-
-The molten alloy can then be piped into a Heavy Press to be turned into ingots
-or other parts, depending on the fitted moulds.
 
 ### Pipes
 
@@ -51,3 +36,32 @@ into the connected blocks.
 ### Eitr Infused Tools
 
 ### Eitr Infused Armour
+
+### Relics
+
+### Bosses
+
+### Personal Eitr Infusion
+
+## Machines/Blocks/etc
+
+### Insulated Tank
+
+Can store molten fluids and create alloys.
+
+### Eitr Containment Module
+
+Can store Eitr.
+
+### Smeltery
+
+Melts ores into a molten form for use in processing, alloying and infusing. 
+
+### Heavy Press
+
+Presses molten fluids into shapes depending on the fitted moulds.
+
+- Ingot
+- Plate
+- Gear
+

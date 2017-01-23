@@ -8,6 +8,16 @@ package com.falconerd.eitr.network.message;/*
  */
 
 public enum EnumPipeMode {
+    /**
+     * INPUT means input INTO an adjacent machine
+     */
     INPUT,
-    OUTPUT
+    /**
+     * OUTPUT means pull FROM an adjacent machine
+     */
+    OUTPUT,
+    /**
+     * DISABLED does neither.
+     */
+    DISABLED
 }

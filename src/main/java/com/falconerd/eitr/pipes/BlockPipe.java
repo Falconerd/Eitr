@@ -10,62 +10,35 @@ package com.falconerd.eitr.pipes;
 
 import com.falconerd.eitr.block.BlockTileEntity;
 import com.falconerd.eitr.util.ChatHelper;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+/**
+ * A lot of this class was sourced from the mod Embers by Elucent.
+ * Source @ https://github.com/RootsTeam/Embers
+ */
 public class BlockPipe extends BlockTileEntity<TileEntityPipe> {
 
-    static final PropertyBool UP = PropertyBool.create("up");
-    static final PropertyBool DOWN = PropertyBool.create("down");
-    static final PropertyBool NORTH = PropertyBool.create("north");
-    static final PropertyBool EAST = PropertyBool.create("east");
-    static final PropertyBool SOUTH = PropertyBool.create("south");
-    static final PropertyBool WEST = PropertyBool.create("west");
-
-    public BlockPipe() {
-        super(Material.ROCK, "pipe");
-        setDefaultState(blockState.getBaseState()
-                .withProperty(UP, false)
-                .withProperty(DOWN, false)
-                .withProperty(NORTH, false)
-                .withProperty(EAST, false)
-                .withProperty(WEST, false)
-        );
-    }
-
-    public boolean canConnectTo(IBlockAccess worldIn, BlockPos pos) {
-        TileEntity tileEntity = worldIn.getTileEntity(pos);
-        return tileEntity instanceof TileEntityPipe;
+    public BlockPipe(Material material, String name) {
+        super(material, name);
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        return state
-                .withProperty(UP, canConnectTo(worldIn, pos.up()))
-                .withProperty(DOWN, this.canConnectTo(worldIn, pos.down()))
-                .withProperty(NORTH, this.canConnectTo(worldIn, pos.north()))
-                .withProperty(EAST, this.canConnectTo(worldIn, pos.east()))
-                .withProperty(SOUTH, this.canConnectTo(worldIn, pos.south()))
-                .withProperty(WEST, this.canConnectTo(worldIn, pos.west()));
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
     }
 
     @Override
-    public int getMetaFromState(IBlockState state) {
-        return 0;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, UP, DOWN, NORTH, EAST, SOUTH, WEST);
+    public boolean isFullCube(IBlockState state) {
+        return false;
     }
 
     @Override
@@ -85,10 +58,90 @@ public class BlockPipe extends BlockTileEntity<TileEntityPipe> {
             TileEntityPipe tileEntityPipe = (TileEntityPipe) worldIn.getTileEntity(pos);
 
             if (tileEntityPipe != null) {
-                tileEntityPipe.switchMode();
+//                tileEntityPipe.switchMode();
+                ChatHelper.sendMessage("I would like to switch modes, but there's no method for it yet!");
             }
         }
 
         return false;
+    }
+
+    @Override
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+        if (world.getTileEntity(pos) != null) {
+            ((TileEntityPipe) world.getTileEntity(pos)).updateNeighbours(world);
+        }
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        if (worldIn.getTileEntity(pos) != null) {
+            ((TileEntityPipe) worldIn.getTileEntity(pos)).updateNeighbours(worldIn);
+            worldIn.notifyBlockUpdate(pos, state, worldIn.getBlockState(pos), 3);
+        }
+    }
+
+    @Override
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+        if (worldIn.getTileEntity(pos) != null) {
+            ((TileEntityPipe) worldIn.getTileEntity(pos)).updateNeighbours(worldIn);
+        }
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        double x1 = 0.375;
+        double y1 = 0.375;
+        double z1 = 0.375;
+        double x2 = 0.625;
+        double y2 = 0.625;
+        double z2 = 0.625;
+
+        if (source.getTileEntity(pos) instanceof TileEntityPipe) {
+            TileEntityPipe pipe = ((TileEntityPipe) source.getTileEntity(pos));
+            if (pipe.up != EnumPipeConnection.NONE) {
+                y2 = 1;
+            }
+            if (pipe.down != EnumPipeConnection.NONE) {
+                y1 = 0;
+            }
+            if (pipe.north != EnumPipeConnection.NONE) {
+                z1 = 0;
+            }
+            if (pipe.south != EnumPipeConnection.NONE) {
+                z2 = 1;
+            }
+            if (pipe.west != EnumPipeConnection.NONE) {
+                x1 = 0;
+            }
+            if (pipe.east != EnumPipeConnection.NONE) {
+                x2 = 1;
+            }
+        }
+
+        return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
+    }
+
+    @Override
+    public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
+        super.onBlockHarvested(worldIn, pos, state, player);
+        if (worldIn.getTileEntity(pos.up()) instanceof TileEntityPipe){
+            ((TileEntityPipe)worldIn.getTileEntity(pos.up())).updateNeighbours(worldIn);
+        }
+        if (worldIn.getTileEntity(pos.down()) instanceof TileEntityPipe){
+            ((TileEntityPipe)worldIn.getTileEntity(pos.down())).updateNeighbours(worldIn);
+        }
+        if (worldIn.getTileEntity(pos.north()) instanceof TileEntityPipe){
+            ((TileEntityPipe)worldIn.getTileEntity(pos.north())).updateNeighbours(worldIn);
+        }
+        if (worldIn.getTileEntity(pos.south()) instanceof TileEntityPipe){
+            ((TileEntityPipe)worldIn.getTileEntity(pos.south())).updateNeighbours(worldIn);
+        }
+        if (worldIn.getTileEntity(pos.west()) instanceof TileEntityPipe){
+            ((TileEntityPipe)worldIn.getTileEntity(pos.west())).updateNeighbours(worldIn);
+        }
+        if (worldIn.getTileEntity(pos.east()) instanceof TileEntityPipe){
+            ((TileEntityPipe)worldIn.getTileEntity(pos.east())).updateNeighbours(worldIn);
+        }
     }
 }
