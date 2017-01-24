@@ -10,16 +10,20 @@ package com.falconerd.eitr.pipes;
 
 import com.falconerd.eitr.block.BlockTileEntity;
 import com.falconerd.eitr.util.ChatHelper;
+import com.falconerd.eitr.util.PipeHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
 
 /**
  * A lot of this class was sourced from the mod Embers by Elucent.
@@ -58,8 +62,12 @@ public class BlockPipe extends BlockTileEntity<TileEntityPipe> {
             TileEntityPipe tileEntityPipe = (TileEntityPipe) worldIn.getTileEntity(pos);
 
             if (tileEntityPipe != null) {
-//                tileEntityPipe.switchMode();
-                ChatHelper.sendMessage("I would like to switch modes, but there's no method for it yet!");
+                PipeHelper.mapNetwork(pos, worldIn);
+                if (Keyboard.isKeyDown(Keyboard.KEY_RSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                    tileEntityPipe.cycleMode();
+                }
+//                System.out.printf("MODE: %s\n", tileEntityPipe.mode);
+//                System.out.printf("UP: %s, DOWN: %s, NORTH: %s, EAST: %s, SOUTH: %s, WEST: %s", tileEntityPipe.up, tileEntityPipe.down, tileEntityPipe.north, tileEntityPipe.east, tileEntityPipe.south, tileEntityPipe.west);
             }
         }
 
@@ -67,9 +75,9 @@ public class BlockPipe extends BlockTileEntity<TileEntityPipe> {
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-        if (world.getTileEntity(pos) != null) {
-            ((TileEntityPipe) world.getTileEntity(pos)).updateNeighbours(world);
+    public void onNeighborChange(IBlockAccess worldIn, BlockPos pos, BlockPos neighbor) {
+        if (worldIn.getTileEntity(pos) != null) {
+            ((TileEntityPipe) worldIn.getTileEntity(pos)).updateNeighbours(worldIn);
         }
     }
 
@@ -83,6 +91,13 @@ public class BlockPipe extends BlockTileEntity<TileEntityPipe> {
 
     @Override
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+        if (worldIn.getTileEntity(pos) != null) {
+            ((TileEntityPipe) worldIn.getTileEntity(pos)).updateNeighbours(worldIn);
+        }
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         if (worldIn.getTileEntity(pos) != null) {
             ((TileEntityPipe) worldIn.getTileEntity(pos)).updateNeighbours(worldIn);
         }

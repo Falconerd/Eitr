@@ -11,6 +11,7 @@ package com.falconerd.eitr.block;
 import com.falconerd.eitr.block.analyzer.BlockAnalyzer;
 import com.falconerd.eitr.block.counter.BlockCounter;
 import com.falconerd.eitr.block.harvester.BlockHarvester;
+import com.falconerd.eitr.block.insulated_tank.BlockInsulatedTank;
 import com.falconerd.eitr.pipes.BlockPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -24,6 +25,7 @@ public class ModBlocks {
     public static BlockAnalyzer analyzer;
     public static BlockHarvester harvester;
     public static BlockPipe pipe;
+    public static BlockInsulatedTank insulatedTank;
 
     public static void init() {
         oreCopper = register(new BlockOre("ore_copper").setCreativeTab(CreativeTabs.MATERIALS));
@@ -31,6 +33,7 @@ public class ModBlocks {
         analyzer = register(new BlockAnalyzer());
         harvester = register(new BlockHarvester());
         pipe = register(new BlockPipe(Material.ROCK, "pipe"));
+        insulatedTank = register(new BlockInsulatedTank());
     }
 
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {
