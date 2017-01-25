@@ -32,7 +32,7 @@ public class ModBlocks {
         counter = register(new BlockCounter());
         analyzer = register(new BlockAnalyzer());
         harvester = register(new BlockHarvester());
-        pipe = register(new BlockPipe(Material.ROCK, "pipe"));
+        pipe = register(new BlockPipe());
         insulatedTank = register(new BlockInsulatedTank());
     }
 

@@ -1,4 +1,4 @@
-package com.falconerd.eitr.network.message;/*
+package com.falconerd.eitr.pipes;/*
  * Author: Falconerd
  * Date: 2017/01/21
  * 
@@ -9,7 +9,7 @@ package com.falconerd.eitr.network.message;/*
 
 public enum EnumPipeMode {
     /**
-     * INPUT means input INTO an adjacent machine
+     * INPUT means push INTO an adjacent machine
      */
     INPUT,
     /**
@@ -19,5 +19,7 @@ public enum EnumPipeMode {
     /**
      * DISABLED does neither.
      */
-    DISABLED
+    DISABLED;
+
+    public static final EnumPipeMode VALUES[] = values();
 }

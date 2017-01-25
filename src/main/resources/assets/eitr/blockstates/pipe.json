@@ -1,12 +1,16 @@
 {
-  "forget_marker": 1,
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "all": "eitr:blocks/pipe"
+    }
+  },
   "variants": {
     "normal": {
-      "model": "eitr:pipe"
+      "model": "cube_all"
     },
     "inventory": {
-      "model": "eitr:pipe",
-      "transform": "forge:default-block"
+      "model": "cube_all"
     }
   }
 }
