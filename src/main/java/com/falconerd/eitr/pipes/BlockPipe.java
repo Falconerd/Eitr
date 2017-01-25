@@ -39,12 +39,14 @@ public class BlockPipe extends BlockTileEntity<TileEntityPipe> {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_RSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
             tileEntity.mode = tileEntity.cycleMode();
+            ChatHelper.sendMessage(String.format("Mode: %s", tileEntity.mode));
             tileEntity.markDirty();
             // We should only need to update the network on the pipes which are
             // set to OUTPUT. The pipes set to INPUT are just indicators, they
             // cannot initiate any actions
             if (tileEntity.mode == EnumPipeMode.OUTPUT) {
                 tileEntity.updateNetwork(worldIn);
+                tileEntity.updateEndPoints();
             }
         }
 

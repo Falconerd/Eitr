@@ -8,19 +8,26 @@
  */
 package com.falconerd.eitr.pipes;
 
+import com.falconerd.eitr.util.ChatHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.*;
 
-public class TileEntityPipe extends TileEntity {
+public class TileEntityPipe extends TileEntity implements ITickable {
 
     EnumPipeMode mode = EnumPipeMode.INPUT;
 
@@ -45,11 +52,11 @@ public class TileEntityPipe extends TileEntity {
 
     public void updateConnections(IBlockAccess world) {
         connections.replace(EnumFacing.DOWN, getConnectionType(world, getPos().down(), EnumFacing.UP));
-        connections.replace(EnumFacing.UP, getConnectionType(world, getPos().down(), EnumFacing.DOWN));
-        connections.replace(EnumFacing.NORTH, getConnectionType(world, getPos().up(), EnumFacing.SOUTH));
-        connections.replace(EnumFacing.SOUTH, getConnectionType(world, getPos().north(), EnumFacing.NORTH));
-        connections.replace(EnumFacing.WEST, getConnectionType(world, getPos().south(), EnumFacing.EAST));
-        connections.replace(EnumFacing.EAST, getConnectionType(world, getPos().west(), EnumFacing.WEST));
+        connections.replace(EnumFacing.UP, getConnectionType(world, getPos().up(), EnumFacing.DOWN));
+        connections.replace(EnumFacing.NORTH, getConnectionType(world, getPos().north(), EnumFacing.SOUTH));
+        connections.replace(EnumFacing.SOUTH, getConnectionType(world, getPos().south(), EnumFacing.NORTH));
+        connections.replace(EnumFacing.WEST, getConnectionType(world, getPos().west(), EnumFacing.EAST));
+        connections.replace(EnumFacing.EAST, getConnectionType(world, getPos().east(), EnumFacing.WEST));
     }
 
     private EnumPipeConnection getConnectionType(IBlockAccess world, BlockPos pos, EnumFacing side) {
@@ -144,7 +151,7 @@ public class TileEntityPipe extends TileEntity {
     void updateNetwork(World world) {
         networkedBlocks = findNetworkedBlocks(world);
         for (BlockPos block : networkedBlocks) {
-            System.out.printf("Fluid/Eitr block at %s %s %s", block.getX(), block.getY(), block.getZ());
+            ChatHelper.sendMessage(String.format("Fluid/Eitr block at %s %s %s", block.getX(), block.getY(), block.getZ()));
         }
     }
 
@@ -170,6 +177,7 @@ public class TileEntityPipe extends TileEntity {
                 if (tileEntity == null || !(tileEntity instanceof TileEntityPipe)) continue;
                 // We want to get it's connections
                 // and see if any of those are pipes or blocks.
+                ((TileEntityPipe) tileEntity).updateConnections(world);
                 ((TileEntityPipe) tileEntity).connections.forEach((side, connection) -> {
                     // If the connection is a block, let's add it to the
                     // network
@@ -189,5 +197,43 @@ public class TileEntityPipe extends TileEntity {
             }
         }
         return blocks;
+    }
+
+    List<BlockPos> outputters = new LinkedList<>();
+    List<BlockPos> inputters = new LinkedList<>();
+
+    void updateEndPoints() {
+        // We should have a list of all connected blocks, let's use it
+        // We need to transfer from the IFluidHandler connectd to this
+        // pipe into an IFluidhandler connected to some other pipe on
+        // the network...
+        // I guess, we get all Blocks connected to this pipe and then
+        // try to transfer the fluid to all other blocks on the network
+        connections.forEach((side, connection) -> {
+            if (connection == EnumPipeConnection.BLOCK) {
+                outputters.add(getPos().offset(side));
+            }
+        });
+        networkedBlocks.forEach(blockPos -> {
+            if (!outputters.contains(blockPos)) {
+                // @TODO Check if a connected pipe is set to input?
+                inputters.add(blockPos);
+            }
+        });
+    }
+
+    @Override
+    public void update() {
+        if (mode == EnumPipeMode.OUTPUT) {
+            outputters.forEach(outputterPos -> {
+                TileEntity outputTE = world.getTileEntity(outputterPos);
+                IFluidHandler source = FluidUtil.getFluidHandler(world, outputterPos, null);
+                inputters.forEach(inputterPos -> {
+                    TileEntity inputTE = world.getTileEntity(inputterPos);
+                    IFluidHandler destination = FluidUtil.getFluidHandler(world, inputterPos, null);
+                    FluidStack stack = FluidUtil.tryFluidTransfer(destination, source, 1000, true);
+                });
+            });
+        }
     }
 }
