@@ -9,6 +9,7 @@
 package com.falconerd.eitr.pipes;
 
 import com.falconerd.eitr.util.ChatHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -226,11 +227,11 @@ public class TileEntityPipe extends TileEntity implements ITickable {
     public void update() {
         if (mode == EnumPipeMode.OUTPUT) {
             outputters.forEach(outputterPos -> {
-                TileEntity outputTE = world.getTileEntity(outputterPos);
-                IFluidHandler source = FluidUtil.getFluidHandler(world, outputterPos, null);
+                TileEntity outputTE = Minecraft.getMinecraft().world.getTileEntity(outputterPos);
+                IFluidHandler source = FluidUtil.getFluidHandler(Minecraft.getMinecraft().world, outputterPos, null);
                 inputters.forEach(inputterPos -> {
-                    TileEntity inputTE = world.getTileEntity(inputterPos);
-                    IFluidHandler destination = FluidUtil.getFluidHandler(world, inputterPos, null);
+                    TileEntity inputTE = Minecraft.getMinecraft().world.getTileEntity(inputterPos);
+                    IFluidHandler destination = FluidUtil.getFluidHandler(Minecraft.getMinecraft().world, inputterPos, null);
                     FluidStack stack = FluidUtil.tryFluidTransfer(destination, source, 1000, true);
                 });
             });

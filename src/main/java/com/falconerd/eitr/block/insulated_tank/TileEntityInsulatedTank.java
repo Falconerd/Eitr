@@ -1,9 +1,11 @@
 package com.falconerd.eitr.block.insulated_tank;
 
 import com.falconerd.eitr.util.ChatHelper;
+import com.falconerd.eitr.util.FluidHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.TileFluidHandler;
 
@@ -15,10 +17,7 @@ public class TileEntityInsulatedTank extends TileFluidHandler {
 
     public TileEntityInsulatedTank() {
         super();
-        tank = new FluidTank(capacity);
-        tank.setTileEntity(this);
-        tank.setCanFill(true);
-        tank.setCanDrain(true);
+        tank.setCapacity(capacity);
     }
 
     @Override
@@ -39,5 +38,13 @@ public class TileEntityInsulatedTank extends TileFluidHandler {
 
     public int getFluidAmount() {
         return tank.getFluidAmount();
+    }
+
+    public FluidStack drain(int amount) {
+        FluidStack stack = tank.drain(amount, false);
+        if (stack != null) {
+            return tank.drain(amount, true);
+        }
+        return null;
     }
 }
